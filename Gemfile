@@ -1,0 +1,5 @@
+source 'https://rubygems.org'
+gem 'async_sinatra'
+gem 'slim'
+gem 'faye'
+gem 'thin'
