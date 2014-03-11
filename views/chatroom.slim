@@ -1,0 +1,6 @@
+h2 Chat Room
+form action='/' method='post'
+  textarea name="history"
+    = $chats.join("\n")
+  input type="text" name="message"
+  input type="submit" value="Send"
