@@ -2,19 +2,24 @@ require 'rubygems'
 require 'sinatra'
 require 'slim'
 require 'faye'
+require 'faye/redis'
 
 Faye::WebSocket.load_adapter('thin')
-use Faye::RackAdapter, mount: '/faye', timeout: 25
+use Faye::RackAdapter,
+            mount: '/faye',
+            timeout: 25,
+            engine: {
+              type: Faye::Redis,
+              host: 'localhost',
+              port: 6379
+            }
 
 set :slim, layout: true
 
-$chats = []
-
 get '/' do
-  slim :chatroom
+  slim :index
 end
 
-post '/' do
-  $chats << params[:message]
-  slim :chatroom
+get '/room' do
+  slim :chatroom, locals: {room: params[:room], username: params[:username] }
 end

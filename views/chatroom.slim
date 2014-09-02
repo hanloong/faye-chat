@@ -1,6 +1,22 @@
-h2 Chat Room
-form action='/' method='post'
-  textarea name="history"
-    = $chats.join("\n")
-  input type="text" name="message"
+h2 Room #{room}
+form#chat-form
+  textarea#messages name="messages"
+  input#message type="text" name="message"
   input type="submit" value="Send"
+javascript:
+  $(document).ready(function() {
+      var client = new Faye.Client('/faye');
+      client.disable('websocket');
+      var subscription = client.subscribe('/#{room}', function(message) {
+        $messages = $('#messages'); 
+        $message = message['user'] + ': ' + message['text'] + "\n"
+        $messages.append($message); 
+        });  
+
+      $("#chat-form").submit(function(e){
+        e.preventDefault();
+        var message = $('#message').val();
+        client.publish('/#{room}', {user: '#{username}', text: message}); 
+        $('#message').val('');
+      }); 
+    });
